@@ -1,5 +1,5 @@
 #include "bmp.hpp"
-
+/* А вот тут уже без указателей, странно. Но уже 8 параметров, бьем антирекорды */
 void WriteImage(const char *fileName, byte *pixels, int32 width, int32 height, int32 bytesPerPixel, int32 resolutionX, int32 resolutionY, char *action) {
     int32 fileSize;
     int paddedRowSize;
@@ -14,6 +14,7 @@ void WriteImage(const char *fileName, byte *pixels, int32 width, int32 height, i
     
     int32 newWidth;
     int32 newHeight;
+    /* Нет, точно нет. Си-шные функции работы со строками убивают людей пачками. */
     if (strcmp (action, "2") == 0 || strcmp (action, "3") == 0) {
         // Вычисление новых размеров изображения после поворота на 90 градусов
         newWidth = height;
@@ -55,7 +56,8 @@ void WriteImage(const char *fileName, byte *pixels, int32 width, int32 height, i
         fwrite(&width, 4, 1, outputFile);
         fwrite(&height, 4, 1, outputFile);
     }
-
+    /* Опять ручная запись данных, которые можно было просто скопировать из считываемой картинки. 
+     * Опять напоминаю, что это превратилось бы вужас, если бы надо было обрабатывать 10 видов bmp*/
     // Запись количества плоскостей (всегда 1)
     int16 planes = 1;
     fwrite(&planes, 2, 1, outputFile);
@@ -69,7 +71,7 @@ void WriteImage(const char *fileName, byte *pixels, int32 width, int32 height, i
     int32 imageSize = height * width * bytesPerPixel;
     fwrite(&imageSize, 4, 1, outputFile);
     // Запись разрешения по горизонтали и вертикали
-    fwrite(&resolutionX, 4, 1, outputFile);
+    fwrite(&resolutionX, 4, 1, outputFile); 
     fwrite(&resolutionY, 4, 1, outputFile);
     // Запись количества используемых цветов
     int32 colorsUsed = MAX_NUMBER_OF_COLORS;
@@ -79,7 +81,10 @@ void WriteImage(const char *fileName, byte *pixels, int32 width, int32 height, i
     fwrite(&importantColors, 4, 1, outputFile);
 
     // Запись данных
-    
+    /* А почему ты решил, что мы пишем программу для не-программиста? Как программисту,
+     * который взял твою программу, использовать отдельно какую-то из этих функциональностей?
+     * То, что находится в ветках, должно быть функциями, которые программист-пользователь сможет
+     * удобно использовать */
     if (strcmp (action, "1") == 0) { //dublication
         int unpaddedRowSize = width * bytesPerPixel;
         for (int i = 0; i < height; i++) {
