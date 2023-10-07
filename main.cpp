@@ -4,6 +4,9 @@
 #include <string.h>
 
 #include "bmp.hpp"
+/* Нужно организовывать код так, чтобы включались только заголовники. А в заголовниках должны
+ * лежать преимущественно объявления, в сурс-файлах, определения. Связано это с раздельной
+ * комплияций и ее пользе. Почитай, если не в курсе */
 #include "readImage.cpp"
 #include "writeImage.cpp"
 
@@ -29,7 +32,7 @@ int main() {
 
     //чтение и запись файла путем вызова функции
     ImageData imageData;
-    
+    /* Вкусные вызовы. Мог бы хотя бы просто целиком imageData передать, а не каждое поле отдельно */
     ReadImage(inputPath, &imageData.pixels, &imageData.width, &imageData.height, &imageData.bytesPerPixel, &imageData.resolutionX, &imageData.resolutionY);
     WriteImage(outputPath, imageData.pixels, imageData.width, imageData.height, imageData.bytesPerPixel, imageData.resolutionX, imageData.resolutionY, action);
     
