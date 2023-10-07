@@ -1,6 +1,12 @@
 #include "bmp.hpp"
 
 //pixels: указатель на массив байтов. Он будет содержать данные пикселей
+/* Зачем тут везде указатели? Они тут не нужны вообще. Копирование числа в 32 бита это не тяжелая операция. Тем более
+ * указатель на указатель на писксели, зачем оно так, ты же в итоге передал ровно то же количество памяти? Убери все указатели 
+ */
+/* Причем если бы это было методом класса картинки, тут нужен был бы всего один аргумент, а не 7. В нормальной функции вообще 
+ * не должно быть больше 4 аргументов. 
+ */
 void ReadImage(const char *fileName,byte **pixels, int32 *width, int32 *height, int32 *bytesPerPixel, int32 *resolutionX, int32 *resolutionY) {
         //открываем файл в бинарном режиме
         FILE *imageFile = fopen(fileName, "rb");
@@ -10,6 +16,9 @@ void ReadImage(const char *fileName,byte **pixels, int32 *width, int32 *height, 
         }
         
         //чтение data offset
+	/* У экземпляпа структуры все данные в памяти хранятся подряд. Если они так же
+         * расположены в считываемых данных, можно заполнить это всё одним вызовом 
+	 */
         int32 dataOffset;
         fseek(imageFile, DATA_OFFSET_OFFSET, SEEK_SET);
         fread(&dataOffset, 4, 1, imageFile);      
@@ -34,7 +43,7 @@ void ReadImage(const char *fileName,byte **pixels, int32 *width, int32 *height, 
         *bytesPerPixel = ((int32)bitsPerPixel) / 8;
         //Каждая строка дополняется так, чтобы ее длина была кратна 4 байтам
         //Рассчитываем размер дополненной строки в байтах
-        int paddedRowSize = (((*width) * (*bytesPerPixel) + 3) / 4) * 4;
+        int paddedRowSize = (((*width) * (*bytesPerPixel) + 3) / 4) * 4; 
         //Нас не интересуют дополненные байты, поэтому мы выделяем память для данных пикселей
         int unpaddedRowSize = (*width) * (*bytesPerPixel);
         //Общий размер данных пикселей в байтах
